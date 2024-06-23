@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Chrome Extension with React & Webpack",
-  "description": "A chrome extension boilerplate built with React 17, Webpack 5, and Webpack Dev Server 4",
+  "name": "Youtube-test",
+  "description": "View to like ratio",
   "options_page": "options.html",
   "background": { "service_worker": "background.bundle.js" },
   "action": {
@@ -15,6 +15,10 @@
     "128": "icon-128.png"
   },
   "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["myContentScript.bundle.js"]
+    },
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
       "js": ["contentScript.bundle.js"],
