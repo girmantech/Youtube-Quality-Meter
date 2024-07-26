@@ -146,11 +146,14 @@ function getViewCount(htmlData) {
 }
 
 window.onload = function() {
+    startProcessing();
+}
+
+async function startProcessing() {
     // wait for 500ms
-    setTimeout(function() {
-        // add hover listeners to videos
-        addHoverListenersToVideos();
-    }, 500);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    addHoverListenersToVideos();
+    setInterval(addHoverListenersToVideos, 5000);
 }
 
 // Function to add hover listeners to video elements
@@ -163,18 +166,25 @@ function addHoverListenersToVideos() {
   
     // Add a 'mouseenter' event listener to each video thumbnail
     videoThumbnails.forEach(thumbnail => {
-      //console.log("url is: " + thumbnail.href);
-      thumbnail.addEventListener('mouseenter', function() {
-        // Extract the video URL from the 'href' attribute
-        const videoUrl = this.href;
-        //alert(videoUrl);
-        console.log('\n \n \n \n Hovered video \n \n \n \n \n \n \n ');
-        console.log('Hovered over video URL:', videoUrl);
 
-        fetchAndDisplayMetadata(thumbnail, videoUrl);
-        
-        // You can now use the videoUrl for your needs
-      });
+        if (!thumbnail.dataset.girmanListenerAdded) {
+            // Mark the thumbnail as processed
+            thumbnail.dataset.girmanListenerAdded = 'true';
+
+            thumbnail.addEventListener('mouseenter', function() {
+                // Extract the video URL from the 'href' attribute
+                const videoUrl = this.href;
+                //alert(videoUrl);
+                console.log('\n \n \n \n Hovered video \n \n \n \n \n \n \n ');
+                console.log('Hovered over video URL:', videoUrl);
+    
+                fetchAndDisplayMetadata(thumbnail, videoUrl);
+    
+                // You can now use the videoUrl for your needs
+            });
+        }
+
+        //console.log("url is: " + thumbnail.href);
     });
 }
 

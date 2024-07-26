@@ -17,7 +17,11 @@
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/*"],
-      "js": ["myContentScript.bundle.js"]
+      "js": ["videoListScript.bundle.js"]
+    },
+    {
+      "matches": ["https://www.youtube.com/watch*"],
+      "js": ["videoScript.bundle.js"]
     },
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
