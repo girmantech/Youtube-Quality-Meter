@@ -1,19 +1,3 @@
-//alert("Hello, world!");
-
-// select an element that has a class of view-count
-//var viewCount = document.querySelector('.view-count');
-// viewCount is a span element. Get the text content of the span element. The text is in the form of comma separated numbers. Convert the text to a number by removing the commas. Also text contains views word. Remove the word views.
-//var count = Number(viewCount.textContent.replace(/,/g, '').replace('views', ''));
-
-// use the following selector and get the element. #factoids > factoid-renderer:nth-child(1) > div > span.YtwFactoidRendererValue > span
-
-//var factoid = document.querySelector('#factoids > factoid-renderer:nth-child(1) > div > span.YtwFactoidRendererValue > span');
-
-// make the API call to https://www.youtube.com/watch?v=MNw9x53Ybos and extract the factoid from the page. The factoid is in the form of a number. Extract the number from the page and convert it to a number.
-
-// get the url from the current page
-
-
 // Get the current URL
 var currentPageUrl = "";
 
@@ -132,7 +116,16 @@ function addHoverListenersToVideos() {
                 //alert(videoUrl);
                 console.log('\n \n \n \n Hovered video \n \n \n \n \n \n \n ');
                 console.log('Hovered over video URL:', videoUrl);
-    
+
+                // Check if the video URL is already processed
+                if (ProcessedVideoUrls.isUrlProcessed(videoUrl)) {
+                    console.log('Video URL already processed');
+                    return;
+                }
+
+                // add videoUrl to processed url list
+                ProcessedVideoUrls.addProcessedUrl(videoUrl);
+                
                 fetchAndDisplayMetadata(thumbnail, videoUrl);
     
                 // You can now use the videoUrl for your needs
@@ -205,6 +198,43 @@ function addPercentMetadata(thumbnail, percentageText) {
 
         // Append the URL element to the meta data container
         metaDataContainer.appendChild(urlElement);
+
+        ProcessedVideoUrls.addProcessedUrl(thumbnail.href);
     }
 
 }
+
+// Encapsulated logic to store processed video URLs
+const ProcessedVideoUrls = (function() {
+    // Private variable to store the list of processed URLs
+    let processedUrls = [];
+
+    // Public methods
+    return {
+        // Add a processed URL to the list
+        addProcessedUrl: function(url) {
+            processedUrls.push(url);
+        },
+
+        // Clear the list of processed URLs
+        clearProcessedUrls: function() {
+            processedUrls = [];
+        },
+
+        // Check if a URL is already processed
+        isUrlProcessed: function(url) {
+            return processedUrls.includes(url);
+        }
+    };
+})();
+
+// Usage example:
+// Add a processed URL
+// ProcessedVideoUrls.addProcessedUrl("https://www.youtube.com/watch?v=abc123");
+
+// // Check if a URL is already processed
+// const isProcessed = ProcessedVideoUrls.isUrlProcessed("https://www.youtube.com/watch?v=abc123");
+// console.log(isProcessed); // Output: true
+
+// // Clear the list of processed URLs
+// ProcessedVideoUrls.clearProcessedUrls();
