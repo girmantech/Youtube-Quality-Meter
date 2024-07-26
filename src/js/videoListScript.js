@@ -44,35 +44,11 @@ function urlEmitter() {
 setInterval(urlEmitter, 1000);
 
 function matchApplicantPageUrl(url) {
-    return url.match(/youtube\.com\/watch\?v=.+/) !== null;
+    //return url.match(/youtube\.com\/watch\?v=.+/) !== null;
 }
 
 function prepareApplicantPage(api) {
-    fetch(api)
-        .then(response => response.text())
-        .then(data => {
-            //var parser = new DOMParser();
-            //var doc = parser.parseFromString(data, 'text/html');
-    
-            // In the console log window, Add 10 line empty space to separate the logs
-            console.log('\n \n \n \n Girish Test \n \n \n \n \n \n \n ');
-            //console.log(api);
-            //console.log(data);
-            // Doc is the parsed HTML content. Print the content of the document
-            var regex = /like this video along with \d{1,3}(,\d{3})* other people/;
-            var match = data.match(regex);
-            var count = Number(match[0].replace(/,/g, '').replace('like this video along with ', '').replace(' other people', ''));
-            console.log(count);
-            //alert(count);
-    
-            // find the element with class view-count and print the text content of the element
-            //var viewCount = doc.querySelector('.view-count');
-            //alert(viewCount.textContent);
-    
-            //var factoid = doc.querySelector('#factoids > factoid-renderer:nth-child(1) > div > span.YtwFactoidRendererValue > span');
-            //var count = Number(factoid.textContent.replace(/,/g, ''));
-            //alert(count);
-        });
+    // process the page!
 }
 
 async function fetchHtmlAsText(youtubeUrl) {
@@ -95,28 +71,7 @@ async function fetchHtmlAsText(youtubeUrl) {
     }
 }
 
-async function fetchLikeCount(youtubeUrl) {
-    console.log(`\n \n \n \n Fetching count for: ${youtubeUrl} \n \n \n \n \n \n \n `);
-    try {
-        // Fetch data from the URL
-        const response = await fetch(youtubeUrl);
-        // Ensure the request was successful
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Convert the response body to text
-        const data = await response.text();
-        console.log(data);
-        
-        // Extract like count using the regex
-        getViewCount(data);
-        return getLikeCount(data);
-    } catch (error) {
-        console.error("Failed to fetch and parse like count:", error);
-    }
-}
-
-function getLikeCount(htmlData) {
+function parseLikeCount(htmlData) {
     const regex = /like this video along with \d{1,3}(,\d{3})* other people/;
     const match = htmlData.match(regex);
     if (match) {
@@ -129,7 +84,7 @@ function getLikeCount(htmlData) {
     }
 }
 
-function getViewCount(htmlData) {
+function parseViewCount(htmlData) {
     const regex = /accessibilityText":"\d{1,3}(,\d{3})* views/;
     const match = htmlData.match(regex);
     if (match) {
@@ -199,9 +154,9 @@ async function fetchAndDisplayMetadata(thumbnail, videoUrl) {
     }
 
     // get like count
-    const likeCount = getLikeCount(htmlContent);
+    const likeCount = parseLikeCount(htmlContent);
     // get view count
-    const viewCount = getViewCount(htmlContent);
+    const viewCount = parseViewCount(htmlContent);
 
     // validate like and view count. It should be greater than 0
     if (likeCount < 0 || viewCount < 0) {
