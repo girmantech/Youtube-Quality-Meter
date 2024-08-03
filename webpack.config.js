@@ -45,11 +45,19 @@ var options = {
     contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.js'),
     devtools: path.join(__dirname, 'src', 'pages', 'Devtools', 'index.js'),
     panel: path.join(__dirname, 'src', 'pages', 'Panel', 'index.jsx'),
-    videoListScript: "./src/js/videoListScript.js",
-    videoScript: "./src/js/videoScript.js",
+    videoListScript: './src/js/videoListScript.js',
+    videoScript: './src/js/videoScript.js',
+    videoSearchListScript: './src/js/videoSearchListScript.js',
   },
   chromeExtensionBoilerplate: {
-    notHotReload: ['background', 'contentScript', 'devtools', 'videoListScript', 'videoScript'],
+    notHotReload: [
+      'background',
+      'contentScript',
+      'devtools',
+      'videoListScript',
+      'videoScript',
+      'videoSearchListScript',
+    ],
   },
   output: {
     filename: '[name].bundle.js',
