@@ -16,6 +16,7 @@
       "matches": ["https://www.youtube.com/*"],
       "js": ["videoListScript.bundle.js"]
     },
+
     {
       "matches": ["https://www.youtube.com/watch*"],
       "js": ["videoScript.bundle.js"]
@@ -27,6 +28,11 @@
     {
       "matches": ["https://www.youtube.com/watch*"],
       "js": ["videoRecommendedListScript.bundle.js"]
+    },
+
+    {
+      "matches": ["https://www.youtube.com/results*"],
+      "js": ["videoSearchListScript.bundle.js"]
     },
     {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],

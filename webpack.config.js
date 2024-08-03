@@ -47,6 +47,7 @@ var options = {
     videoListScript: './src/js/videoListScript.js',
     videoScript: './src/js/videoScript.js',
     videoRecommendedListScript: './src/js/videoRecommendedList.js',
+    videoSearchListScript: './src/js/videoSearchListScript.js',
   },
   chromeExtensionBoilerplate: {
     notHotReload: [
@@ -56,6 +57,7 @@ var options = {
       'videoListScript',
       'videoScript',
       'videoRecommendedListScript',
+      'videoSearchListScript',
     ],
   },
   output: {
