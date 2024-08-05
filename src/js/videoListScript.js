@@ -1,4 +1,7 @@
 // Get the current URL
+
+import { getBackgroundColor } from './color';
+
 var currentPageUrl = '';
 
 // Listen for changes to the URL
@@ -165,11 +168,11 @@ async function fetchAndDisplayMetadata(thumbnail, videoUrl) {
 
   // calculate percentage
   const percentage = (likeCount / viewCount) * 100;
-  const percentageText = `Percentage: ${percentage.toFixed(2)}%`;
+  const percentageText = ` ${percentage.toFixed(1)}%`;
   console.log(percentageText);
 
   // add metadata to the thumbnail
-  addPercentMetadata(thumbnail, percentageText);
+  addPercentMetadata(thumbnail, percentage, percentageText);
 }
 
 function addUrlToVideoMetadata(thumbnail, videoUrl) {
@@ -195,7 +198,7 @@ function addUrlToVideoMetadata(thumbnail, videoUrl) {
   }
 }
 
-function addPercentMetadata(thumbnail, percentageText) {
+function addPercentMetadata(thumbnail, percentage, percentageText) {
   const richItemRenderer = thumbnail.closest(
     '.style-scope ytd-rich-item-renderer'
   );
@@ -205,14 +208,27 @@ function addPercentMetadata(thumbnail, percentageText) {
       '.style-scope ytd-video-meta-block'
     );
     if (metaDataContainer) {
-      // Create a new element to display the video URL
+      metaDataContainer.style.display = 'flex';
+      metaDataContainer.style.flexDirection = 'row';
       const urlElement = document.createElement('span');
       urlElement.textContent = percentageText;
-      urlElement.style.marginLeft = '0px'; // Add some spacing
+      urlElement.style.marginLeft = '10px';
 
-      // Append the URL element to the meta data container
+      const color = getBackgroundColor(percentage);
+      urlElement.style.backgroundColor = color[0];
+      urlElement.style.color = color[1];
+      urlElement.style.fontWeight = '600';
+      urlElement.style.fontSize = '17.84px';
+
+      urlElement.style.textAlign = 'center';
+
+      urlElement.style.display = 'flex';
+      urlElement.style.alignItems = 'center';
+      urlElement.style.justifyContent = 'center';
+      urlElement.style.width = '87px';
+      urlElement.style.height = '45.95px';
+      urlElement.style.borderRadius = '22px';
       metaDataContainer.appendChild(urlElement);
-
       ProcessedVideoUrls.addProcessedUrl(thumbnail.href);
     }
   } else {
