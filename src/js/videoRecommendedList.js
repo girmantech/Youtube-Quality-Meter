@@ -1,6 +1,6 @@
 // Get the current URL
 var currentPageUrl = '';
-
+console.log('recommended starts here ');
 // Listen for changes to the URL
 function urlEmitter() {
   // Get the new URL
@@ -92,10 +92,6 @@ function parseViewCount(htmlData) {
   }
 }
 
-window.onload = function () {
-  startProcessing();
-};
-
 async function startProcessing() {
   // wait for 500ms
   await new Promise((resolve) => setTimeout(resolve, 500));
@@ -175,7 +171,7 @@ function addUrlToVideoMetadata(thumbnail, videoUrl) {
   const richItemRenderer = thumbnail.closest(
     '.style-scope ytd-compact-video-renderer'
   );
-  console.log('rich time renderer:-' + richItemRenderer);
+  console.log('ankitsolanki:-' + richItemRenderer);
   if (richItemRenderer) {
     const metaDataContainer = richItemRenderer.querySelector(
       '.style-scope ytd-video-meta-block'
@@ -243,3 +239,5 @@ const ProcessedVideoUrls = (function () {
     },
   };
 })();
+
+startProcessing();

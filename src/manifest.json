@@ -18,23 +18,6 @@
     },
 
     {
-      "matches": ["https://www.youtube.com/watch*"],
-      "js": ["videoScript.bundle.js"]
-    },
-    {
-      "matches": ["https://www.youtube.com/watch*"],
-      "js": ["videoScript.bundle.js"]
-    },
-    {
-      "matches": ["https://www.youtube.com/watch*"],
-      "js": ["videoRecommendedListScript.bundle.js"]
-    },
-
-    {
-      "matches": ["https://www.youtube.com/results*"],
-      "js": ["videoSearchListScript.bundle.js"]
-    },
-    {
       "matches": ["http://*/*", "https://*/*", "<all_urls>"],
       "js": ["contentScript.bundle.js"],
       "css": ["content.styles.css"]
@@ -43,8 +26,16 @@
   "devtools_page": "devtools.html",
   "web_accessible_resources": [
     {
-      "resources": ["content.styles.css", "icon-128.png", "icon-34.png"],
-      "matches": []
+      "resources": [
+        "content.styles.css",
+        "icon-128.png",
+        "icon-34.png",
+        "videoScript.bundle.js",
+
+        "videoSearchListScript.bundle.js",
+        "videoRecommendedListScript.bundle.js"
+      ],
+      "matches": ["<all_urls>"]
     }
   ]
 }

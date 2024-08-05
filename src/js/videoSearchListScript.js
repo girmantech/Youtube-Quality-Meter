@@ -126,6 +126,4 @@ async function startProcessing() {
   setInterval(addHoverListenersToVideos, 5000);
 }
 
-window.onload = function () {
-  startProcessing();
-};
+startProcessing();
