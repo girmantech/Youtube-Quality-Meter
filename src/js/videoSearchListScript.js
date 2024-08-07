@@ -1,5 +1,7 @@
 // searchResultScript.bundle.js
 
+import { getBackgroundColor } from './color';
+
 // Encapsulated logic to store processed video URLs
 console.log('hello ');
 const ProcessedVideoUrls = (function () {
@@ -79,12 +81,12 @@ async function fetchAndDisplayMetadata(thumbnail, videoUrl) {
   }
 
   const percentage = (likeCount / viewCount) * 100;
-  const percentageText = `Percentage: ${percentage.toFixed(2)}%`;
+  const percentageText = `${percentage.toFixed(1)}%`;
 
-  addPercentMetadata(thumbnail, percentageText);
+  addPercentMetadata(thumbnail, percentage, percentageText);
 }
 
-function addPercentMetadata(thumbnail, percentageText) {
+function addPercentMetadata(thumbnail, percentage, percentageText) {
   const richItemRenderer = thumbnail.closest('.style-scope ytd-video-renderer');
 
   console.log(richItemRenderer);
@@ -95,7 +97,21 @@ function addPercentMetadata(thumbnail, percentageText) {
     if (metaDataContainer) {
       const urlElement = document.createElement('span');
       urlElement.textContent = percentageText;
-      urlElement.style.marginLeft = '0px';
+
+      const color = getBackgroundColor(percentage);
+      urlElement.style.backgroundColor = color[0];
+      urlElement.style.color = color[1];
+      urlElement.style.fontWeight = '500';
+      urlElement.style.fontSize = '12.84px';
+
+      urlElement.style.textAlign = 'center';
+
+      urlElement.style.display = 'flex';
+      urlElement.style.alignItems = 'center';
+      urlElement.style.justifyContent = 'center';
+      urlElement.style.width = '60px';
+      urlElement.style.height = '30.95px';
+      urlElement.style.borderRadius = '28px';
       metaDataContainer.appendChild(urlElement);
       ProcessedVideoUrls.addProcessedUrl(thumbnail.href);
     }

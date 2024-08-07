@@ -1,3 +1,5 @@
+import { getBackgroundColor } from './color';
+
 // Get the current URL
 var currentPageUrl = '';
 
@@ -165,10 +167,10 @@ async function fetchAndDisplayMetadata(thumbnail, videoUrl) {
 
   // calculate percentage
   const percentage = (likeCount / viewCount) * 100;
-  const percentageText = `Percentage: ${percentage.toFixed(2)}%`;
+  const percentageText = ` ${percentage.toFixed(1)}%`;
 
   // add metadata to the thumbnail
-  addPercentMetadata(thumbnail, percentageText);
+  addPercentMetadata(thumbnail, percentage, percentageText);
 }
 
 function addUrlToVideoMetadata(thumbnail, videoUrl) {
@@ -195,7 +197,7 @@ function addUrlToVideoMetadata(thumbnail, videoUrl) {
   }
 }
 
-function addPercentMetadata(thumbnail, percentageText) {
+function addPercentMetadata(thumbnail, percentage, percentageText) {
   const richItemRenderer = thumbnail.closest(
     '.style-scope ytd-compact-video-renderer'
   );
@@ -206,9 +208,26 @@ function addPercentMetadata(thumbnail, percentageText) {
     );
     if (metaDataContainer) {
       // Create a new element to display the video URL
+      metaDataContainer.style.display = 'flex';
+      metaDataContainer.style.flexDirection = 'row';
       const urlElement = document.createElement('span');
       urlElement.textContent = percentageText;
-      urlElement.style.marginLeft = '0px'; // Add some spacing
+      urlElement.style.marginLeft = '10px';
+
+      const color = getBackgroundColor(percentage);
+      urlElement.style.backgroundColor = color[0];
+      urlElement.style.color = color[1];
+      urlElement.style.fontWeight = '600';
+      urlElement.style.fontSize = '11px';
+
+      urlElement.style.textAlign = 'center';
+
+      urlElement.style.display = 'flex';
+      urlElement.style.alignItems = 'center';
+      urlElement.style.justifyContent = 'center';
+      urlElement.style.width = '45.5px';
+      urlElement.style.height = '24px';
+      urlElement.style.borderRadius = '11.77px';
 
       // Append the URL element to the meta data container
       metaDataContainer.appendChild(urlElement);
