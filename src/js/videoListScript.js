@@ -1,5 +1,3 @@
-// Get the current URL
-
 import { getBackgroundColor } from './color';
 
 var currentPageUrl = '';
@@ -29,7 +27,7 @@ function urlEmitter() {
 setInterval(urlEmitter, 1000);
 
 function matchApplicantPageUrl(url) {
-  //return url.match(/youtube\.com\/watch\?v=.+/) !== null;
+  // return url.match(/youtube\.com\/watch\?v=.+/) !== null;
 }
 
 function prepareApplicantPage(api) {
@@ -50,7 +48,7 @@ async function fetchHtmlAsText(youtubeUrl) {
     }
     // Convert the response body to text
     const data = await response.text();
-    //console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.error('Failed to fetch html content:', error);
@@ -108,22 +106,22 @@ async function startProcessing() {
 
 // Function to add hover listeners to video elements
 function addHoverListenersToVideos() {
-  // Select all video thumbnail elements (the selector might need updates)
-  const videoThumbnails = document.querySelectorAll('a#thumbnail');
+  // Select all video card elements (the selector might need updates)
+  const videoCards = document.querySelectorAll('ytd-rich-item-renderer');
 
-  //console.log('\n \n \n \n Hover Test \n \n \n \n \n \n \n ');
-  //console.log(videoThumbnails.length);
+  // Add a 'mouseenter' event listener to each video card
+  videoCards.forEach((card) => {
+    if (!card.dataset.girmanListenerAdded) {
+      // Mark the card as processed
+      card.dataset.girmanListenerAdded = 'true';
 
-  // Add a 'mouseenter' event listener to each video thumbnail
-  videoThumbnails.forEach((thumbnail) => {
-    if (!thumbnail.dataset.girmanListenerAdded) {
-      // Mark the thumbnail as processed
-      thumbnail.dataset.girmanListenerAdded = 'true';
+      card.addEventListener('mouseenter', function () {
+        // Extract the video URL from the 'href' attribute of the thumbnail
+        const thumbnail = this.querySelector('a#thumbnail');
+        const videoUrl = thumbnail ? thumbnail.href : null;
 
-      thumbnail.addEventListener('mouseenter', function () {
-        // Extract the video URL from the 'href' attribute
-        const videoUrl = this.href;
-        //alert(videoUrl);
+        if (!videoUrl) return;
+
         console.log('\n \n \n \n Hovered video \n \n \n \n \n \n \n ');
 
         // Check if the video URL is already processed
@@ -135,17 +133,15 @@ function addHoverListenersToVideos() {
         // add videoUrl to processed url list
         ProcessedVideoUrls.addProcessedUrl(videoUrl);
 
-        fetchAndDisplayMetadata(thumbnail, videoUrl);
+        fetchAndDisplayMetadata(card, videoUrl);
 
         // You can now use the videoUrl for your needs
       });
     }
-
-    //console.log("url is: " + thumbnail.href);
   });
 }
 
-async function fetchAndDisplayMetadata(thumbnail, videoUrl) {
+async function fetchAndDisplayMetadata(card, videoUrl) {
   // fetch html content
   const htmlContent = await fetchHtmlAsText(videoUrl);
 
@@ -171,66 +167,38 @@ async function fetchAndDisplayMetadata(thumbnail, videoUrl) {
   const percentageText = ` ${percentage.toFixed(1)}%`;
   console.log(percentageText);
 
-  // add metadata to the thumbnail
-  addPercentMetadata(thumbnail, percentage, percentageText);
+  // add metadata to the card
+  addPercentMetadata(card, percentage, percentageText);
 }
 
-function addUrlToVideoMetadata(thumbnail, videoUrl) {
-  const richItemRenderer = thumbnail.closest(
-    '.style-scope ytd-rich-item-renderer'
+function addPercentMetadata(card, percentage, percentageText) {
+  const metaDataContainer = card.querySelector(
+    '.style-scope ytd-video-meta-block'
   );
 
-  if (richItemRenderer) {
-    const metaDataContainer = richItemRenderer.querySelector(
-      '.style-scope ytd-video-meta-block'
-    );
-    if (metaDataContainer) {
-      // Create a new element to display the video URL
-      const urlElement = document.createElement('span');
-      urlElement.textContent = `URL: ${videoUrl}`;
-      urlElement.style.marginLeft = '0px'; // Add some spacing
+  if (metaDataContainer) {
+    metaDataContainer.style.display = 'flex';
+    metaDataContainer.style.flexDirection = 'row';
+    const urlElement = document.createElement('span');
+    urlElement.textContent = percentageText;
+    urlElement.style.marginLeft = '10px';
 
-      // Append the URL element to the meta data container
-      metaDataContainer.appendChild(urlElement);
-    }
-  } else {
-    // Handle the case where closest did not find a matching element
-  }
-}
+    const color = getBackgroundColor(percentage);
+    urlElement.style.backgroundColor = color[0];
+    urlElement.style.color = color[1];
+    urlElement.style.fontWeight = '600';
+    urlElement.style.fontSize = '17.84px';
 
-function addPercentMetadata(thumbnail, percentage, percentageText) {
-  const richItemRenderer = thumbnail.closest(
-    '.style-scope ytd-rich-item-renderer'
-  );
+    urlElement.style.textAlign = 'center';
 
-  if (richItemRenderer) {
-    const metaDataContainer = richItemRenderer.querySelector(
-      '.style-scope ytd-video-meta-block'
-    );
-    if (metaDataContainer) {
-      metaDataContainer.style.display = 'flex';
-      metaDataContainer.style.flexDirection = 'row';
-      const urlElement = document.createElement('span');
-      urlElement.textContent = percentageText;
-      urlElement.style.marginLeft = '10px';
-
-      const color = getBackgroundColor(percentage);
-      urlElement.style.backgroundColor = color[0];
-      urlElement.style.color = color[1];
-      urlElement.style.fontWeight = '600';
-      urlElement.style.fontSize = '17.84px';
-
-      urlElement.style.textAlign = 'center';
-
-      urlElement.style.display = 'flex';
-      urlElement.style.alignItems = 'center';
-      urlElement.style.justifyContent = 'center';
-      urlElement.style.width = '87px';
-      urlElement.style.height = '45.95px';
-      urlElement.style.borderRadius = '22px';
-      metaDataContainer.appendChild(urlElement);
-      ProcessedVideoUrls.addProcessedUrl(thumbnail.href);
-    }
+    urlElement.style.display = 'flex';
+    urlElement.style.alignItems = 'center';
+    urlElement.style.justifyContent = 'center';
+    urlElement.style.width = '87px';
+    urlElement.style.height = '45.95px';
+    urlElement.style.borderRadius = '22px';
+    metaDataContainer.appendChild(urlElement);
+    ProcessedVideoUrls.addProcessedUrl(card.href);
   } else {
     // Handle the case where closest did not find a matching element
   }
@@ -259,14 +227,3 @@ const ProcessedVideoUrls = (function () {
     },
   };
 })();
-
-// Usage example:
-// Add a processed URL
-// ProcessedVideoUrls.addProcessedUrl("https://www.youtube.com/watch?v=abc123");
-
-// // Check if a URL is already processed
-// const isProcessed = ProcessedVideoUrls.isUrlProcessed("https://www.youtube.com/watch?v=abc123");
-// console.log(isProcessed); // Output: true
-
-// // Clear the list of processed URLs
-// ProcessedVideoUrls.clearProcessedUrls();
