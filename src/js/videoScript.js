@@ -73,9 +73,9 @@ const getLikesCount = () => {
 const buildRatio = () => {
   const likes = getLikesCount();
   const views = getViewCount();
-  const ratio = ((100.0 * likes) / views).toFixed(2);
+  const ratio = ((100.0 * likes) / views).toFixed(1);
   if (isNaN(ratio)) return;
-  let ratioText = `${ratio}% `;
+  let ratioText = `${ratio}%`;
   let ratioTooltip = `This video had ${fmtNumber(likes)} likes / ${fmtNumber(
     views
   )} views = ${ratioText} when first opened`;
