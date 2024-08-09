@@ -139,9 +139,7 @@ function addHoverListenersToVideos() {
 async function startProcessing() {
   await new Promise((resolve) => setTimeout(resolve, 500));
   addHoverListenersToVideos();
-  setInterval(addHoverListenersToVideos, 5000);
+  setInterval(addHoverListenersToVideos, 500);
 }
 
-window.onload = function () {
-  startProcessing();
-};
+startProcessing();

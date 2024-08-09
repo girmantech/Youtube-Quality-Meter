@@ -94,15 +94,13 @@ function parseViewCount(htmlData) {
   }
 }
 
-window.onload = function () {
-  startProcessing();
-};
+startProcessing();
 
 async function startProcessing() {
   // wait for 500ms
   await new Promise((resolve) => setTimeout(resolve, 500));
   addHoverListenersToVideos();
-  setInterval(addHoverListenersToVideos, 5000);
+  setInterval(addHoverListenersToVideos, 500);
 }
 
 // Function to add hover listeners to video elements

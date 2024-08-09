@@ -1,30 +1,90 @@
 import { getBackgroundColor } from './color';
 
-var currentPageUrl = '';
+let currentPageUrl = window.location.href;
 
-// Listen for changes to the URL
+const policy = window.trustedTypes.createPolicy('default', {
+  createScriptURL: (url) => {
+    console.log(`Creating trusted script URL for: ${url}`);
+    return url;
+  },
+});
+
+if (policy) {
+  console.log('Trusted Types policy successfully created.');
+} else {
+  console.log('Failed to create Trusted Types policy.');
+}
+// Function to inject the video script
+function injectVideoScript() {
+  if (!document.querySelector('#videoScript')) {
+    console.log('Injecting videoScript...');
+    const script = document.createElement('script');
+    script.src = chrome.runtime.getURL('videoScript.bundle.js');
+
+    script.id = 'videoScript';
+    script.type = 'text/javascript';
+    document.head.appendChild(script);
+  } else {
+    console.log('videoScript already injected');
+  }
+}
+
+function injectVideoRecommended() {
+  if (!document.querySelector('#videoRecommended')) {
+    console.log('Injecting videoRecommendedScript...');
+    const script = document.createElement('script');
+    script.src = policy.createScriptURL(
+      chrome.runtime.getURL('videoRecommendedListScript.bundle.js')
+    );
+    script.id = 'videoRecommended';
+    script.type = 'text/javascript';
+    console.log('recommendedScript:- ' + script.src);
+    document.head.appendChild(script);
+  } else {
+    console.log('videoRecommended already injected');
+  }
+}
+
+function injectVideoSearch() {
+  if (!document.querySelector('#videoSearch')) {
+    console.log('Injecting videoSearchListScript...');
+    const script = document.createElement('script');
+    script.src = policy.createScriptURL(
+      chrome.runtime.getURL('videoSearchListScript.bundle.js')
+    );
+    script.id = 'videoSearch';
+    script.type = 'text/javascript';
+    document.head.appendChild(script);
+  } else {
+    console.log('videoSearchListScript already injected');
+  }
+}
+
+// Function to monitor URL changes and inject script accordingly
 function urlEmitter() {
-  // Get the new URL
   const newUrl = window.location.href;
 
-  // Check if the pathname has changed
-  if (newUrl !== currentPageUrl && window.location.pathname !== '/') {
-    // The pathname has changed
-    let applicantPageUrl = matchApplicantPageUrl(newUrl);
-
-    if (applicantPageUrl) {
-      console.log('applicant page url matched');
-      prepareApplicantPage(newUrl);
-    }
-  } else {
-    // The pathname hasn't changed, do something here
+  // Check if the pathname has changed and if it matches /watch
+  if (newUrl !== currentPageUrl && newUrl.includes('youtube.com/watch')) {
+    console.log('Navigated to a watch page, injecting videoScript...');
+    injectVideoScript();
+    injectVideoRecommended();
+  } else if (
+    newUrl !== currentPageUrl &&
+    newUrl.includes('youtube.com/results')
+  ) {
+    console.log(
+      'Navigated to a Search page, injecting videoSearchListScript...'
+    );
+    injectVideoSearch();
   }
 
   // Update the current URL
   currentPageUrl = newUrl;
+  console.log('URL Emitter: ' + currentPageUrl);
 }
 
-setInterval(urlEmitter, 1000);
+setInterval(urlEmitter, 200);
 
 function matchApplicantPageUrl(url) {
   // return url.match(/youtube\.com\/watch\?v=.+/) !== null;
