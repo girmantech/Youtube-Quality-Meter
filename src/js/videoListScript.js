@@ -66,6 +66,7 @@ function urlEmitter() {
 
   if (newUrl !== currentPageUrl) {
     // Inject or remove scripts based on the URL
+    clearAllPercentMetadata();
 
     if (newUrl.includes('youtube.com/watch')) {
       console.log('Navigated to a watch page, injecting videoScript...');
@@ -206,7 +207,7 @@ async function startProcessing() {
   // wait for 500ms
   await new Promise((resolve) => setTimeout(resolve, 500));
   addHoverListenersToVideos();
-  setInterval(addHoverListenersToVideos, 5000);
+  setInterval(addHoverListenersToVideos, 500);
 }
 
 // Function to add hover listeners to video elements
@@ -282,10 +283,19 @@ function addPercentMetadata(card, percentage, percentageText) {
   );
 
   if (metaDataContainer) {
-    metaDataContainer.style.display = 'flex';
+    // Remove any existing percentage element
+    const existingPercentageElement = metaDataContainer.querySelector(
+      '.percentage-metadata'
+    );
+    if (existingPercentageElement) {
+      existingPercentageElement.remove();
+    }
+
+    // Create a new span for the percentage
     metaDataContainer.style.flexDirection = 'row';
     const urlElement = document.createElement('span');
     urlElement.textContent = percentageText;
+    urlElement.className = 'percentage-metadata'; // Add a class for easier selection/removal
     urlElement.style.marginLeft = '10px';
 
     const color = getBackgroundColor(percentage);
@@ -295,18 +305,24 @@ function addPercentMetadata(card, percentage, percentageText) {
     urlElement.style.fontSize = '17.84px';
 
     urlElement.style.textAlign = 'center';
-
     urlElement.style.display = 'flex';
+
     urlElement.style.alignItems = 'center';
     urlElement.style.justifyContent = 'center';
     urlElement.style.width = '87px';
     urlElement.style.height = '45.95px';
     urlElement.style.borderRadius = '22px';
+
     metaDataContainer.appendChild(urlElement);
     ProcessedVideoUrls.addProcessedUrl(card.href);
-  } else {
-    // Handle the case where closest did not find a matching element
   }
+}
+
+function clearAllPercentMetadata() {
+  const allPercentageElements = document.querySelectorAll(
+    '.percentage-metadata'
+  );
+  allPercentageElements.forEach((element) => element.remove());
 }
 
 // Encapsulated logic to store processed video URLs

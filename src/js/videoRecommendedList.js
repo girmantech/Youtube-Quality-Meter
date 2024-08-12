@@ -8,6 +8,7 @@ function urlEmitter() {
   const newUrl = window.location.href;
 
   if (newUrl !== currentPageUrl) {
+    clearAllPercentMetadata();
     currentPageUrl = newUrl;
 
     // Check if we are on the YouTube search results page
@@ -151,12 +152,21 @@ function addPercentMetadata(thumbnail, percentage, percentageText) {
     );
 
     if (metaDataContainer) {
+      // Remove any existing percentage element
+      const existingPercentageElement = metaDataContainer.querySelector(
+        '.percentage-metadata'
+      );
+      if (existingPercentageElement) {
+        existingPercentageElement.remove();
+      }
+
       metaDataContainer.style.display = 'flex';
       metaDataContainer.style.flexDirection = 'row';
 
       const urlElement = document.createElement('span');
       urlElement.textContent = percentageText;
       urlElement.style.marginLeft = '10px';
+      urlElement.className = 'percentage-metadata';
 
       const color = getBackgroundColor(percentage);
       urlElement.style.backgroundColor = color[0];
@@ -174,6 +184,13 @@ function addPercentMetadata(thumbnail, percentage, percentageText) {
       metaDataContainer.appendChild(urlElement);
     }
   }
+}
+
+function clearAllPercentMetadata() {
+  const allPercentageElements = document.querySelectorAll(
+    '.percentage-metadata'
+  );
+  allPercentageElements.forEach((element) => element.remove());
 }
 
 // Encapsulated logic to store processed video URLs
