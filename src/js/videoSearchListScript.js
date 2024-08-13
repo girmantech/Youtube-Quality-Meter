@@ -3,6 +3,7 @@
 import { getBackgroundColor } from './color';
 
 // Encapsulated logic to store processed video URLs
+
 console.log('hello ');
 const ProcessedVideoUrls = (function () {
   let processedUrls = [];
@@ -50,19 +51,35 @@ function parseLikeCount(htmlData) {
   }
 }
 
-function parseViewCount(htmlData) {
-  const regex = /accessibilityText":"\d{1,3}(,\d{3})* views/;
-  const match = htmlData.match(regex);
-  if (match) {
-    const numberRegex = /\d{1,3}(,\d{3})* views/;
-    const numberMatch = match[0].match(numberRegex);
-    const count = Number(
-      numberMatch[0].replace(/,/g, '').replace(' views', '')
-    );
-    return count;
-  } else {
-    return -1;
+const parseCount = (str) => {
+  let multiplier = 1;
+
+  // Check for suffix and set multiplier
+  if (str.includes('K')) {
+    multiplier = 1000;
+    str = str.replace('K', '');
+  } else if (str.includes('M')) {
+    multiplier = 1000000;
+    str = str.replace('M', '');
+  } else if (str.includes('B')) {
+    multiplier = 1000000000;
+    str = str.replace('B', '');
   }
+
+  // Replace any commas
+  str = str.replace(/,/g, '');
+
+  // Parse the number and multiply
+  return parseFloat(str) * multiplier;
+};
+
+function parseViewCount(card, htmlData) {
+  const viewContainer = card?.querySelector('.inline-metadata-item');
+
+  let str = viewContainer
+    ? viewContainer?.innerText.split(' ')[0]
+    : 'no match found';
+  return parseCount(str);
 }
 
 async function fetchAndDisplayMetadata(thumbnail, videoUrl) {
@@ -71,9 +88,10 @@ async function fetchAndDisplayMetadata(thumbnail, videoUrl) {
     console.error('Failed to fetch HTML content');
     return;
   }
-
+  const card = thumbnail.closest('ytd-video-renderer');
   const likeCount = parseLikeCount(htmlContent);
-  const viewCount = parseViewCount(htmlContent);
+  console.log('likes:-' + likeCount);
+  const viewCount = parseViewCount(card, htmlContent);
 
   if (likeCount < 0 || viewCount < 0) {
     console.error('Failed to fetch like or view count');

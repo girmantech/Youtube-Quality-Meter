@@ -64,24 +64,57 @@ function injectVideoSearch() {
 function urlEmitter() {
   const newUrl = window.location.href;
 
-  // Check if the pathname has changed and if it matches /watch
-  if (newUrl !== currentPageUrl && newUrl.includes('youtube.com/watch')) {
-    console.log('Navigated to a watch page, injecting videoScript...');
-    injectVideoScript();
-    injectVideoRecommended();
-  } else if (
-    newUrl !== currentPageUrl &&
-    newUrl.includes('youtube.com/results')
-  ) {
-    console.log(
-      'Navigated to a Search page, injecting videoSearchListScript...'
-    );
-    injectVideoSearch();
+  if (newUrl !== currentPageUrl) {
+    // Inject or remove scripts based on the URL
+    clearAllPercentMetadata();
+
+    if (newUrl.includes('youtube.com/watch')) {
+      console.log('Navigated to a watch page, injecting videoScript...');
+      injectVideoScript();
+      injectVideoRecommended();
+    } else if (newUrl.includes('youtube.com/results')) {
+      console.log(
+        'Navigated to a Search page, injecting videoSearchListScript...'
+      );
+      injectVideoSearch();
+    } else if (
+      newUrl === 'https://www.youtube.com/' ||
+      newUrl === 'https://youtube.com/'
+    ) {
+      console.log(
+        'Navigated to the YouTube homepage, removing injected scripts...'
+      );
+      removeInjectedScripts();
+    }
+
+    // Update the current URL
+    currentPageUrl = newUrl;
+    console.log('URL Emitter: ' + currentPageUrl);
+  }
+}
+
+// Function to remove the injected scripts
+function removeInjectedScripts() {
+  // Remove the videoScript
+  const videoScript = document.querySelector('#videoScript');
+  if (videoScript) {
+    videoScript.remove();
+    console.log('videoScript removed.');
   }
 
-  // Update the current URL
-  currentPageUrl = newUrl;
-  console.log('URL Emitter: ' + currentPageUrl);
+  // Remove the videoRecommendedScript
+  const videoRecommendedScript = document.querySelector('#videoRecommended');
+  if (videoRecommendedScript) {
+    videoRecommendedScript.remove();
+    console.log('videoRecommendedScript removed.');
+  }
+
+  // Remove the videoSearchListScript
+  const videoSearchListScript = document.querySelector('#videoSearch');
+  if (videoSearchListScript) {
+    videoSearchListScript.remove();
+    console.log('videoSearchListScript removed.');
+  }
 }
 
 setInterval(urlEmitter, 200);
@@ -135,22 +168,35 @@ function parseLikeCount(htmlData) {
   }
 }
 
-function parseViewCount(htmlData) {
-  const regex = /accessibilityText":"\d{1,3}(,\d{3})* views/;
-  const match = htmlData.match(regex);
-  if (match) {
-    // get number from the match
-    const numberRegex = /\d{1,3}(,\d{3})* views/;
-    const numberMatch = match[0].match(numberRegex);
-    const count = Number(
-      numberMatch[0].replace(/,/g, '').replace(' views', '')
-    );
-    console.log('view count value: ' + count);
-    return count;
-  } else {
-    console.log('No match found');
-    return -1;
+const parseCount = (str) => {
+  let multiplier = 1;
+
+  // Check for suffix and set multiplier
+  if (str.includes('K')) {
+    multiplier = 1000;
+    str = str.replace('K', '');
+  } else if (str.includes('M')) {
+    multiplier = 1000000;
+    str = str.replace('M', '');
+  } else if (str.includes('B')) {
+    multiplier = 1000000000;
+    str = str.replace('B', '');
   }
+
+  // Replace any commas
+  str = str.replace(/,/g, '');
+
+  // Parse the number and multiply
+  return parseFloat(str) * multiplier;
+};
+function parseViewCount(card, htmlData) {
+  const viewContainer = card.querySelector('.inline-metadata-item');
+
+  console.log('viewContainer ' + viewContainer.innerText);
+  let str = viewContainer
+    ? viewContainer.innerText.split(' ')[0]
+    : 'no match found';
+  return parseCount(str);
 }
 
 window.onload = function () {
@@ -161,7 +207,7 @@ async function startProcessing() {
   // wait for 500ms
   await new Promise((resolve) => setTimeout(resolve, 500));
   addHoverListenersToVideos();
-  setInterval(addHoverListenersToVideos, 5000);
+  setInterval(addHoverListenersToVideos, 500);
 }
 
 // Function to add hover listeners to video elements
@@ -214,7 +260,7 @@ async function fetchAndDisplayMetadata(card, videoUrl) {
   // get like count
   const likeCount = parseLikeCount(htmlContent);
   // get view count
-  const viewCount = parseViewCount(htmlContent);
+  const viewCount = parseViewCount(card, htmlContent);
 
   // validate like and view count. It should be greater than 0
   if (likeCount < 0 || viewCount < 0) {
@@ -237,10 +283,19 @@ function addPercentMetadata(card, percentage, percentageText) {
   );
 
   if (metaDataContainer) {
-    metaDataContainer.style.display = 'flex';
+    // Remove any existing percentage element
+    const existingPercentageElement = metaDataContainer.querySelector(
+      '.percentage-metadata'
+    );
+    if (existingPercentageElement) {
+      existingPercentageElement.remove();
+    }
+
+    // Create a new span for the percentage
     metaDataContainer.style.flexDirection = 'row';
     const urlElement = document.createElement('span');
     urlElement.textContent = percentageText;
+    urlElement.className = 'percentage-metadata'; // Add a class for easier selection/removal
     urlElement.style.marginLeft = '10px';
 
     const color = getBackgroundColor(percentage);
@@ -250,18 +305,24 @@ function addPercentMetadata(card, percentage, percentageText) {
     urlElement.style.fontSize = '17.84px';
 
     urlElement.style.textAlign = 'center';
-
     urlElement.style.display = 'flex';
+
     urlElement.style.alignItems = 'center';
     urlElement.style.justifyContent = 'center';
     urlElement.style.width = '87px';
     urlElement.style.height = '45.95px';
     urlElement.style.borderRadius = '22px';
+
     metaDataContainer.appendChild(urlElement);
     ProcessedVideoUrls.addProcessedUrl(card.href);
-  } else {
-    // Handle the case where closest did not find a matching element
   }
+}
+
+function clearAllPercentMetadata() {
+  const allPercentageElements = document.querySelectorAll(
+    '.percentage-metadata'
+  );
+  allPercentageElements.forEach((element) => element.remove());
 }
 
 // Encapsulated logic to store processed video URLs
