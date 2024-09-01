@@ -1,7 +1,7 @@
 {
-  "name": "youtube-test",
+  "name": "youtube-quality-meter",
   "version": "5.0.4",
-  "description": "View to like ratio",
+  "description": "The chrome extension that shows like-to-view ratio beside Youtube videos.",
   "license": "MIT",
   "repository": {
     "type": "git",

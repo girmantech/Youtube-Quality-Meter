@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Youtube-test",
-  "description": "View to like ratio",
+  "name": "Youtube Quality Meter",
+  "description": "The chrome extension that shows like-to-view ratio beside Youtube videos.",
   "options_page": "options.html",
   "background": { "service_worker": "background.bundle.js" },
   "action": {
