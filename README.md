@@ -1,6 +1,12 @@
+![Youtube quality meter cover image](https://github.com/user-attachments/assets/a5037243-4b13-46be-a59e-e5210e38000e)
+
 # YouTube Quality Meter Chrome Extension
 
 This Chrome extension enhances your YouTube viewing experience by displaying the like-to-view ratio directly on the video thumbnails. Built using React 18 and Webpack 5, this tool helps you filter out low-quality content by providing immediate insights into the community's reception of videos.
+
+<img src="https://github.com/user-attachments/assets/bccf47f4-9ea1-421a-ae9a-cd7639b08bb8" width="40%"/>
+<img src="https://github.com/user-attachments/assets/83d6a83d-76c8-4b75-bb0d-5bf1615d49da" width="40%"/>
+<img src="https://github.com/user-attachments/assets/0742d59b-0720-4569-9940-42d9fbec728c" width="80%"/>
 
 ## Philosophy
 With over 114 million active channels and millions of videos uploaded daily, finding genuinely engaging content is increasingly difficult. The challenge of finding quality content amidst the vast sea of videos is real. YouTube's recommendation algorithm often promotes content that doesn't necessarily align with quality or relevance. 
