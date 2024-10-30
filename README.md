@@ -53,7 +53,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Email - [girish@girmantech.com](mailto:girish@girmantech.com)
+Email - [contact@girmantech.com](mailto:girish@girmantech.com)
 
 Project Link: [Youtube Quality Meter](https://github.com/girmantech/Youtube-Quality-Meter)
 
